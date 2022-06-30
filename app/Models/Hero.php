@@ -15,7 +15,6 @@ class Hero extends Model implements HasMedia
 
     protected $fillable = [
         'name',
-        'is_local',
         'height',
         'weight',
         'intelligence',

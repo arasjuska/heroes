@@ -8,6 +8,15 @@
         <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
             <div class="text-gray-600">
                 <p>Please fill out all the fields.</p>
+                @if ($errors->any())
+                    <div class="bg-rose-500 text-white p-4 my-4 rounded">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
 
             <form action="{{ route('heroes.store') }}" method="post" class="lg:col-span-2"
@@ -21,10 +30,10 @@
                     </div>
 
                     <div class="md:col-span-3">
-                        <label for="publisher">{{ __('Publisher') }}</label>
+                        <label for="publisher_id">{{ __('Publisher') }}</label>
                         <div class="h-10 bg-gray-50 flex border border-gray-200 rounded items-center mt-1">
-                            <select name="publisher"
-                                    id="publisher"
+                            <select name="publisher_id"
+                                    id="publisher_id"
                                     class="px-4 appearance-none outline-none text-gray-800 w-full bg-transparent">
                                 @foreach($publishers as $publisher)
                                     <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
@@ -90,10 +99,10 @@
                     </div>
 
                     <div class="md:col-span-3">
-                        <label for="alignment">{{ __('Alignment') }}</label>
+                        <label for="alignment_id">{{ __('Alignment') }}</label>
                         <div class="h-10 bg-gray-50 flex border border-gray-200 rounded items-center mt-1">
-                            <select name="alignment"
-                                    id="alignment"
+                            <select name="alignment_id"
+                                    id="alignment_id"
                                     class="px-4 appearance-none outline-none text-gray-800 w-full bg-transparent">
                                 @foreach($alignments as $alignment)
                                     <option value="{{ $alignment->id }}">{{ $alignment->name }}</option>

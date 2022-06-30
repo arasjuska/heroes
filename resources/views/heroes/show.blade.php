@@ -21,6 +21,9 @@
                     <li>{{ __('Power: ') }}{{ $hero->power }}</li>
                     <li>{{ __('Combat: ') }}{{ $hero->combat }}</li>
                 </ul>
+                <div class="border-t mt-2 pt-2">
+                    <p>{{ __('Alignment: ') }}{{ $hero->alignment->name }}</p>
+                </div>
             </div>
 
             <div class="md:col-span-4">

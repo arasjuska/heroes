@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAliasRequest;
+use App\Http\Requests\StoreHeroRequest;
 use App\Models\Alias;
 use App\Models\Alignment;
 use App\Models\Hero;
@@ -31,40 +33,25 @@ class HeroController extends Controller
         return view('heroes.create', compact('publishers', 'alignments'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, StoreHeroRequest $storeHeroRequest)
     {
-        $request->validate([
-            'height' => 'integer|between:0,100',
-        ]);
+        $validated = $storeHeroRequest->validated();
 
-        $hero = new Hero([
-            'name' => $request->name,
-            'height' => $request->height,
-            'weight' => $request->weight,
-            'intelligence' => $request->intelligence,
-            'strength' => $request->strength,
-            'speed' => $request->speed,
-            'durability' => $request->durability,
-            'power' => $request->power,
-            'combat' => $request->combat,
-            'publisher_id' => $request->publisher,
-            'alignment_id' => $request->alignment,
-        ]);
-
-        if ($request->hasFile('cover')) {
-            $hero->addMediaFromRequest('cover')->toMediaCollection('covers');
-        }
-
-        $hero->save();
+        $hero = Hero::create($validated);
 
         foreach ($request->aliases as $item) {
-            $alias = new Alias();
+
+            $alias = new Alias($validated);
             $alias->name = $item['name'];
             $alias->hero_id = $hero->id;
             $alias->save();
         }
 
-        return redirect()->route('heroes.index');
+        if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+            $hero->addMediaFromRequest('cover')->toMediaCollection('covers');
+        }
+
+        return redirect()->route('heroes.index')->with('success', 'Hero successfully created.');
     }
 
     public function show(Hero $hero)
@@ -76,6 +63,6 @@ class HeroController extends Controller
     {
         $hero->delete();
 
-        return redirect()->route('heroes.index');
+        return redirect()->route('heroes.index')->with('success', 'Hero successfully deleted.');
     }
 }
