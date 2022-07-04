@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiHeroController;
 use App\Http\Controllers\HeroController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,8 @@ Route::controller(HeroController::class)->group(function () {
     Route::post('/heroes', 'store')->name('heroes.store');
     Route::get('/heroes/{hero}', 'show')->name('heroes.show');
     Route::delete('/heroes/{hero}', 'destroy')->name('heroes.destroy');
+
+    Route::post('/heroes/api', 'storeApiHero')->name('store.api.hero');
 });
+
+//Route::get('/heroes/api', [ApiHeroController::class, 'getHero'])->name('store.api.hero');

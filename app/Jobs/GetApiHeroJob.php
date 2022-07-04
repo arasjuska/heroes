@@ -1,73 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Jobs;
 
-use App\Http\Requests\StoreHeroRequest;
 use App\Models\Alias;
 use App\Models\Alignment;
 use App\Models\Hero;
 use App\Models\Publisher;
 use App\Services\ApiUrl;
-use Illuminate\Http\Request;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class HeroController extends Controller
+class GetApiHeroJob implements ShouldQueue
 {
-    public function index(Request $request)
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        $heroes = Hero::with('alignment', 'media')->paginate(10);
-
-        if ($request->speed == 'asc') {
-            $heroes = $heroes->sortBy('speed', SORT_STRING)->perPage();
-            $heroes->values()->all();
-        } else if ($request->speed == 'desc') {
-            $heroes = $heroes->orderBy('speed', 'desc')->cursorPaginate(15);
-        }
-
-        return view('welcome', compact('heroes'));
+        //
     }
 
-    public function create()
-    {
-        $publishers = Publisher::all();
-        $alignments = Alignment::all();
-
-        return view('heroes.create', compact('publishers', 'alignments'));
-    }
-
-    public function store(Request $request, StoreHeroRequest $storeHeroRequest)
-    {
-        $validated = $storeHeroRequest->validated();
-
-        $hero = Hero::create($validated);
-
-        foreach ($request->aliases as $item) {
-
-            $alias = new Alias($validated);
-            $alias->name = $item['name'];
-            $alias->hero_id = $hero->id;
-            $alias->save();
-        }
-
-        if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
-            $hero->addMediaFromRequest('cover')->toMediaCollection('covers');
-        }
-
-        return redirect()->route('heroes.index')->with('success', 'Hero successfully created.');
-    }
-
-    public function show(Hero $hero)
-    {
-        return view('heroes.show', compact('hero'));
-    }
-
-    public function destroy(Hero $hero)
-    {
-        $hero->delete();
-
-        return redirect()->route('heroes.index')->with('success', 'Hero successfully deleted.');
-    }
-
-    public function storeApiHero(ApiUrl $apiUrl)
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle(ApiUrl $apiUrl)
     {
         $response = $apiUrl->get('/all.json');
 
@@ -117,7 +83,5 @@ class HeroController extends Controller
                 }
             }
         }
-
-        return redirect()->route('heroes.index');
     }
 }

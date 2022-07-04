@@ -61,4 +61,9 @@ class Hero extends Model implements HasMedia
             ->fit(Manipulations::FIT_CROP, 600, 600)
             ->nonQueued();
     }
+
+    public function getNumber($str)
+    {
+        return (int)filter_var($str, FILTER_SANITIZE_NUMBER_INT);
+    }
 }

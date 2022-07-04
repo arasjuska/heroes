@@ -4,6 +4,12 @@
 
 @section('content')
     <div class="p-8 bg-white rounded">
+
+        <form action="{{ route('store.api.hero') }}" method="post" class="mb-4">
+            @csrf
+            <button type="submit" class="bg-sky-600 text-white py-1 px-4 rounded">{{ __('Api') }}</button>
+        </form>
+
         <form action="{{ route('heroes.index') }}" method="get" class="mb-4">
             <label for="speed">{{ __('Sort By Speed:') }}</label>
             <select name="speed" class="border-2 py-1 rounded">
@@ -43,8 +49,8 @@
                 </x-card>
             @endforeach
         </div>
-{{--        <div>--}}
-{{--            {{ $heroes->links() }}--}}
-{{--        </div>--}}
+        <div>
+            {{ $heroes->links() }}
+        </div>
     </div>
 @endsection
